@@ -51,6 +51,16 @@ jobs:
             exit 1
           fi
 
+      # Like EF Core's HasPendingModelChanges: a schema change without its migration fails the build.
+      - name: Verify migrations match the schema
+        run: |
+          npx drizzle-kit generate --name drift-check
+          if [ -n "$(git status --porcelain drizzle)" ]; then
+            git status --porcelain drizzle
+            echo "::error::src/lib/db/schema.ts changed without a migration. Run npm run db:generate."
+            exit 1
+          fi
+
       - name: Typecheck
         run: npm run typecheck
 

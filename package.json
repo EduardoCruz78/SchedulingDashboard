@@ -17,7 +17,9 @@
     "test:e2e": "playwright test",
     "check": "npm run lint && npm run format:check && npm run typecheck && npm test && npm run build",
     "api:generate": "openapi-typescript openapi/scheduling.json -o src/lib/api/generated/scheduling.ts && openapi-typescript openapi/webhook-relay.json -o src/lib/api/generated/webhook-relay.ts",
-    "api:download": "node scripts/download-contracts.mjs"
+    "api:download": "node scripts/download-contracts.mjs",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "tsx scripts/migrate.mts"
   },
   "dependencies": {
     "class-variance-authority": "^0.7.1",

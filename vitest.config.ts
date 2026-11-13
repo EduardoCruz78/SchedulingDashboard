@@ -40,6 +40,7 @@ export default defineConfig({
           environment: 'node',
           include: ['test/integration/**/*.test.ts'],
           setupFiles: ['test/support/setup-integration.ts'],
+          globalSetup: ['test/support/postgres-global-setup.ts'],
           testTimeout: 30_000,
           hookTimeout: 120_000,
           fileParallelism: false,
