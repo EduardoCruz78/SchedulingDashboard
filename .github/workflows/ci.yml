@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-test:
+    name: Lint, typecheck, test and build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Fails if a production dependency has a known vulnerability. Dev-only tools are reviewed by hand.
+      - name: Audit production dependencies
+        run: npm audit --omit=dev --audit-level=moderate
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Verify formatting
+        run: npm run format:check
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      # Ubuntu runners ship with Docker, so Testcontainers-based integration tests run here.
+      - name: Test
+        run: npm test
+
+      - name: Build
+        run: npm run build

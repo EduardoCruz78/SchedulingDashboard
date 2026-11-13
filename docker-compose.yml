@@ -1,0 +1,22 @@
+# Local Postgres for the dashboard (received webhooks and login throttling).
+# Host port 5435: 5432/5433 are taken by local PostgreSQL services and 5434 by the WebhookRelay compose.
+name: scheduling-dashboard
+
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: dashboard
+      POSTGRES_USER: dashboard
+      POSTGRES_PASSWORD: dashboard
+    ports:
+      - '5435:5432'
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dashboard -d dashboard']
+      interval: 3s
+      retries: 20
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
