@@ -22,7 +22,9 @@ export default function DashboardLayout({ children }: LayoutProps<'/'>) {
       </a>
       <aside className="bg-sidebar hidden w-60 shrink-0 border-r p-4 md:block">
         <Link href="/" className="mb-6 flex items-center gap-2 px-2 font-semibold">
-          <CalendarClock className="size-5" aria-hidden />
+          <span className="bg-brand text-brand-foreground grid size-7 shrink-0 place-items-center rounded-md">
+            <CalendarClock className="size-4" aria-hidden />
+          </span>
           SchedulingDashboard
         </Link>
         <NavLinks />

@@ -156,7 +156,11 @@ async function Kpis() {
       <Kpi
         label="No-show rate"
         value={percent(noShowRate(counts))}
-        detail={`Today · ${percent(monthRate)} over the last ${PAST_DAYS} days`}
+        detail={
+          monthRate === null
+            ? `Today · no finished appointments in the last ${PAST_DAYS} days`
+            : `Today · ${percent(monthRate)} over the last ${PAST_DAYS} days`
+        }
       />
     </section>
   )

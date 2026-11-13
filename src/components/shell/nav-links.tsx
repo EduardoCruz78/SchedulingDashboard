@@ -84,13 +84,13 @@ function NavList({
                 onClick={onNavigate}
                 aria-current={active ? 'page' : undefined}
                 className={cn(
-                  'focus-visible:ring-ring/50 flex items-center gap-2 rounded-md px-2 py-1.5 text-sm outline-none focus-visible:ring-3',
+                  'focus-visible:ring-ring/50 relative flex items-center gap-2 rounded-md px-2 py-1.5 text-sm transition-colors outline-none focus-visible:ring-3',
                   active
-                    ? 'bg-muted text-foreground font-medium'
+                    ? 'bg-muted text-foreground before:bg-brand font-medium before:absolute before:inset-y-1.5 before:-left-2 before:w-0.75 before:rounded-full'
                     : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
                 )}
               >
-                <Icon className="size-4" aria-hidden />
+                <Icon className={cn('size-4', active && 'text-brand')} aria-hidden />
                 {label}
               </Link>
             )
