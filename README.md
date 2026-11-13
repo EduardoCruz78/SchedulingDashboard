@@ -25,7 +25,7 @@ flowchart LR
 
 ## Live demo
 
-**<**DEMO_URL**>**, sign in with the demo admin (the same public credentials as the SchedulingApi demo):
+**<https://scheduling-dashboard-brown.vercel.app>**, sign in with the demo admin (the same public credentials as the SchedulingApi demo):
 `admin@scheduling.demo` / `Admin123!`. The login page fills them in for you.
 
 Try the whole chain: book an appointment in the [SchedulingApi demo](https://scheduling-api-gf47.onrender.com/scalar)
@@ -136,7 +136,7 @@ OpenAPI (que encontraram dois bugs reais de contrato nos projetos 1 e 2, corrigi
 receptor de webhooks com verificação Standard Webhooks e deduplicação, modo demo seguro, acessibilidade
 checada com axe e testes de ponta a ponta subindo os três projetos a partir do código.
 
-Demo: <**DEMO_URL**> (admin `admin@scheduling.demo` / `Admin123!`). As APIs dormem no plano gratuito do
+Demo: <https://scheduling-dashboard-brown.vercel.app> (admin `admin@scheduling.demo` / `Admin123!`). As APIs dormem no plano gratuito do
 Render; o primeiro acesso pode levar cerca de 50 segundos.
 
 </details>
