@@ -5,11 +5,6 @@
     "description": "Appointment booking for small businesses. Log in with POST /api/auth/login and paste the accessToken into Authorize.",
     "version": "1.0.0"
   },
-  "servers": [
-    {
-      "url": "https://scheduling-api-gf47.onrender.com/"
-    }
-  ],
   "paths": {
     "/api/appointments": {
       "post": {
@@ -131,11 +126,7 @@
             "name": "page",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -143,11 +134,7 @@
             "name": "pageSize",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -200,11 +187,7 @@
             "name": "page",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -212,11 +195,7 @@
             "name": "pageSize",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -666,11 +645,7 @@
             "name": "page",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -678,11 +653,7 @@
             "name": "pageSize",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -1109,7 +1080,7 @@
           "204": {
             "description": "No Content",
             "content": {
-              "application/json": { }
+              "application/json": {}
             }
           },
           "404": {
@@ -1223,11 +1194,7 @@
             "name": "page",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           },
@@ -1235,11 +1202,7 @@
             "name": "pageSize",
             "in": "query",
             "schema": {
-              "pattern": "^-?(?:0|[1-9]\\d*)$",
-              "type": [
-                "integer",
-                "string"
-              ],
+              "type": "integer",
               "format": "int32"
             }
           }
@@ -1432,7 +1395,7 @@
           "204": {
             "description": "No Content",
             "content": {
-              "application/json": { }
+              "application/json": {}
             }
           },
           "404": {
@@ -1521,11 +1484,7 @@
             "format": "date-time"
           },
           "priceAtBooking": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "status": {
@@ -1551,7 +1510,12 @@
         }
       },
       "AppointmentStatus": {
-        "type": "integer"
+        "enum": [
+          "Scheduled",
+          "Cancelled",
+          "Completed",
+          "NoShow"
+        ]
       },
       "AuthToken": {
         "required": [
@@ -1639,7 +1603,15 @@
         }
       },
       "DayOfWeek": {
-        "type": "integer"
+        "enum": [
+          "Sunday",
+          "Monday",
+          "Tuesday",
+          "Wednesday",
+          "Thursday",
+          "Friday",
+          "Saturday"
+        ]
       },
       "LoginRequest": {
         "required": [
@@ -1672,27 +1644,15 @@
             }
           },
           "page": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "pageSize": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "totalCount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           }
         }
@@ -1713,27 +1673,15 @@
             }
           },
           "page": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "pageSize": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "totalCount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           }
         }
@@ -1754,27 +1702,15 @@
             }
           },
           "page": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "pageSize": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "totalCount": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           }
         }
@@ -1795,11 +1731,9 @@
             ]
           },
           "status": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
-              "integer",
-              "string"
+              "integer"
             ],
             "format": "int32"
           },
@@ -1915,19 +1849,11 @@
             ]
           },
           "durationMinutes": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "price": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "isActive": {
@@ -1961,19 +1887,11 @@
             ]
           },
           "durationMinutes": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
-            "type": [
-              "integer",
-              "string"
-            ],
+            "type": "integer",
             "format": "int32"
           },
           "price": {
-            "pattern": "^-?(?:0|[1-9]\\d*)(?:\\.\\d+)?$",
-            "type": [
-              "number",
-              "string"
-            ],
+            "type": "number",
             "format": "double"
           },
           "isActive": {
@@ -2109,11 +2027,9 @@
             ]
           },
           "status": {
-            "pattern": "^-?(?:0|[1-9]\\d*)$",
             "type": [
               "null",
-              "integer",
-              "string"
+              "integer"
             ],
             "format": "int32"
           },
@@ -2190,7 +2106,7 @@
   },
   "security": [
     {
-      "Bearer": [ ]
+      "Bearer": []
     }
   ],
   "tags": [

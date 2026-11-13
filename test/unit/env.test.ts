@@ -14,7 +14,7 @@ describe('parseEnv', () => {
     const env = parseEnv(valid)
     expect(env.DEMO_MODE).toBe(false)
     expect(env.BUSINESS_TIME_ZONE).toBe('America/Sao_Paulo')
-    expect(env.API_TIMEOUT_MS).toBe(10_000)
+    expect(env.UPSTREAM_TIMEOUT_MS).toBe(10_000)
   })
 
   it('parses DEMO_MODE as a boolean string', () => {

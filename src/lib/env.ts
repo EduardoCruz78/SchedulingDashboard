@@ -18,7 +18,7 @@ export const envSchema = z.object({
     .string()
     .default('America/Sao_Paulo')
     .refine((tz) => isValidTimeZone(tz), 'must be an IANA time zone'),
-  API_TIMEOUT_MS: z.coerce.number().int().min(1000).max(60_000).default(10_000),
+  UPSTREAM_TIMEOUT_MS: z.coerce.number().int().min(1000).max(60_000).default(10_000),
 })
 
 export type Env = z.infer<typeof envSchema>

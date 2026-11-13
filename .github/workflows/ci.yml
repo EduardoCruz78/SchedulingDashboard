@@ -40,6 +40,17 @@ jobs:
       - name: Verify formatting
         run: npm run format:check
 
+      # The client types are generated from the versioned contracts in openapi/. Regenerating must not
+      # change anything: if it does, someone edited a contract (or the types) without the other.
+      - name: Verify API types match the contracts
+        run: |
+          npm run api:generate
+          if [ -n "$(git status --porcelain src/lib/api/generated)" ]; then
+            git diff --stat src/lib/api/generated
+            echo "::error::src/lib/api/generated is stale. Run npm run api:generate and commit."
+            exit 1
+          fi
+
       - name: Typecheck
         run: npm run typecheck
 

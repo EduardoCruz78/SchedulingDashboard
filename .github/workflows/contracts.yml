@@ -1,0 +1,45 @@
+name: API contracts
+
+# Did a deployed API change its contract? Downloads both live OpenAPI documents and compares them with
+# the versioned copies the dashboard is built against. A difference is not always a break, but it is
+# always worth a look: regenerate the types and let the typecheck say what broke.
+on:
+  schedule:
+    - cron: '0 9 * * 1' # Mondays, 09:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    name: Compare live contracts with openapi/
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - run: npm ci
+
+      # The demos sleep on Render's free plan; the script waits up to two minutes for each.
+      - name: Download the live contracts
+        run: npm run api:download
+
+      - name: Regenerate types and typecheck against them
+        run: |
+          npm run api:generate
+          npm run typecheck
+
+      - name: Fail on drift
+        run: |
+          if [ -n "$(git status --porcelain openapi)" ]; then
+            git diff --stat openapi
+            echo "::error::A live API contract differs from openapi/. Review, regenerate and commit."
+            exit 1
+          fi

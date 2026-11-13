@@ -1,4 +1,6 @@
-// Integration tests talk to fake APIs (MSW) and a real Postgres (Testcontainers).
-// Each file sets up what it needs; this file only pins the process time zone so date
-// formatting is tested against the business zone, not the machine running the tests.
+import { testEnv } from './test-env'
+
+// Integration tests talk to fake APIs (MSW) and a real Postgres (Testcontainers). The process time zone
+// is pinned to UTC so date formatting is tested against the business zone, not the test machine's.
 process.env.TZ = 'UTC'
+Object.assign(process.env, testEnv)
