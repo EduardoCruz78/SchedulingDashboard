@@ -1,7 +1,7 @@
 # SchedulingDashboard
 
 [![CI](https://github.com/EduardoCruz78/SchedulingDashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/EduardoCruz78/SchedulingDashboard/actions/workflows/ci.yml)
-[![Live demo](https://img.shields.io/badge/demo-live-000000?logo=vercel&logoColor=white)](__DEMO_URL__)
+[![Live demo](https://img.shields.io/badge/demo-live-000000?logo=vercel&logoColor=white)](https://scheduling-dashboard-brown.vercel.app)
 ![Next.js 16](https://img.shields.io/badge/Next.js-16-000000?logo=nextdotjs&logoColor=white)
 ![React 19](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178C6?logo=typescript&logoColor=white)
