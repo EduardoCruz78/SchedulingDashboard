@@ -128,3 +128,21 @@
     @apply font-sans;
   }
 }
+
+/*
+ * Appointment status series: slots 1-4 of the validated categorical palette (dataviz reference),
+ * in a fixed order that follows the entity (Scheduled, Cancelled, Completed, NoShow), never the rank.
+ * Dark mode uses the same hues stepped for the dark surface, not an automatic flip.
+ */
+:root {
+  --series-scheduled: #2a78d6;
+  --series-cancelled: #eb6834;
+  --series-completed: #1baf7a;
+  --series-noshow: #eda100;
+}
+.dark {
+  --series-scheduled: #3987e5;
+  --series-cancelled: #d95926;
+  --series-completed: #199e70;
+  --series-noshow: #c98500;
+}
