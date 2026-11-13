@@ -1,4 +1,5 @@
 import 'server-only'
+import { connection } from 'next/server'
 import { getEnv } from '@/lib/env'
 
 export type ServiceState = 'up' | 'down'
@@ -23,6 +24,7 @@ async function ping(url: string, timeoutMs: number): Promise<ServiceState> {
  * it opens, so a sleeping Render service is already waking while the admin types the password.
  */
 export async function checkApiHealth(timeoutMs: number): Promise<ApiHealth> {
+  await connection() // live status: never prerendered
   const env = getEnv()
   const [scheduling, relay] = await Promise.all([
     ping(`${env.SCHEDULING_API_URL}/health`, timeoutMs),
