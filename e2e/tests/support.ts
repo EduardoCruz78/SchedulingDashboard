@@ -16,7 +16,9 @@ export async function submitLogin(page: Page, user: { email: string; password: s
 /** Signs in and waits until the redirect after login has happened (the session cookie is set). */
 export async function signIn(page: Page, user = admin) {
   await submitLogin(page, user)
-  await page.waitForURL((url) => !url.pathname.startsWith('/login'))
+  // 'commit', not the default 'load': the dashboard streams its sections, and on a cold API the stream can
+  // take long to finish even though the redirect (what this waits for) already happened.
+  await page.waitForURL((url) => !url.pathname.startsWith('/login'), { waitUntil: 'commit' })
 }
 
 /** WCAG 2.1 A/AA checks with axe-core on the current page. */
