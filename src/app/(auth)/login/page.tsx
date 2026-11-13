@@ -19,7 +19,9 @@ export default function LoginPage({ searchParams }: PageProps<'/login'>) {
     <main className="flex min-h-svh items-center justify-center p-4">
       <div className="w-full max-w-sm space-y-6">
         <div className="flex items-center justify-center gap-2 text-lg font-semibold">
-          <CalendarClock className="size-6" aria-hidden />
+          <span className="bg-brand text-brand-foreground grid size-8 shrink-0 place-items-center rounded-md">
+            <CalendarClock className="size-5" aria-hidden />
+          </span>
           SchedulingDashboard
         </div>
         <Card>

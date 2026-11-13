@@ -95,7 +95,14 @@ bash e2e/run.sh
 
 ## Tests
 
-**TEST_TABLE**
+**130 tests** run by `npm test` in CI, plus 11 end-to-end tests.
+
+| Suite                            | Tests | What it covers                                                                                                                                      |
+| -------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Unit (`test/unit`)               | 79    | Session token, login throttling, time zones, schedule layout, overview KPIs, ProblemDetails mapping, catalog validation, demo settings, environment |
+| Component (`test/component`)     | 14    | Activity feed, cancel dialog, deliveries table and service form, rendered with Testing Library                                                      |
+| Integration (`test/integration`) | 37    | Server Actions, sign-in, typed API clients and the signed-webhook receiver, against PostgreSQL in Testcontainers and the APIs mocked with MSW       |
+| End-to-end (`e2e/`)              | 11    | Playwright against SchedulingApi, WebhookRelay and this dashboard built from source in Docker Compose (`bash e2e/run.sh`)                           |
 
 ## Project structure
 
