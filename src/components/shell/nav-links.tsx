@@ -1,6 +1,7 @@
 'use client'
 
 import Link from 'next/link'
+import { Suspense } from 'react'
 import { usePathname } from 'next/navigation'
 import {
   Activity,
@@ -44,8 +45,29 @@ function isActive(pathname: string, href: string): boolean {
   return href === '/' ? pathname === '/' : pathname === href || pathname.startsWith(`${href}/`)
 }
 
+/**
+ * The active link depends on the URL, which on dynamic routes is only known at request time; the
+ * fallback is the same list without highlighting, so the static shell still has full navigation.
+ */
 export function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
-  const pathname = usePathname()
+  return (
+    <Suspense fallback={<NavList pathname={null} onNavigate={onNavigate} />}>
+      <ActiveNavList onNavigate={onNavigate} />
+    </Suspense>
+  )
+}
+
+function ActiveNavList({ onNavigate }: { onNavigate?: (() => void) | undefined }) {
+  return <NavList pathname={usePathname()} onNavigate={onNavigate} />
+}
+
+function NavList({
+  pathname,
+  onNavigate,
+}: {
+  pathname: string | null
+  onNavigate?: (() => void) | undefined
+}) {
   return (
     <nav aria-label="Main" className="grid gap-6">
       {navGroups.map((group) => (
@@ -54,7 +76,7 @@ export function NavLinks({ onNavigate }: { onNavigate?: () => void }) {
             {group.label}
           </p>
           {group.items.map(({ href, label, icon: Icon }) => {
-            const active = isActive(pathname, href)
+            const active = pathname !== null && isActive(pathname, href)
             return (
               <Link
                 key={href}

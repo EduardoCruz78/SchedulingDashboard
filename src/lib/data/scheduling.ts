@@ -67,3 +67,9 @@ export async function getProfessional(id: string): Promise<Professional> {
   const api = await client()
   return call(api.GET('/api/professionals/{id}', { params: { path: { id } } }))
 }
+
+/** One page of services, as the API paginates them (for the Services table). */
+export async function listServicesPage(page: number, includeInactive: boolean) {
+  const api = await client()
+  return call(api.GET('/api/services', { params: { query: { includeInactive, page, pageSize: 10 } } }))
+}
