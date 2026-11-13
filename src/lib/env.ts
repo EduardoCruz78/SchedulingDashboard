@@ -14,6 +14,8 @@ export const envSchema = z.object({
   DATABASE_URL: z.url().refine((v) => /^postgres(ql)?:\/\//.test(v), 'must be a postgres:// URL'),
   WEBHOOK_SECRET: z.string().startsWith('whsec_', 'must be the whsec_ secret of the relay subscription'),
   DEMO_MODE: z.stringbool().default(false),
+  /** The relay subscription that delivers to this dashboard; in demo mode only its deliveries can be replayed. */
+  RELAY_SUBSCRIPTION_ID: z.uuid().optional(),
   BUSINESS_TIME_ZONE: z
     .string()
     .default('America/Sao_Paulo')
