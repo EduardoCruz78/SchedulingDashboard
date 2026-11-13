@@ -57,5 +57,6 @@ export default defineConfig([
     'test-results/**',
     'next-env.d.ts',
     'src/lib/api/generated/**',
+    '.e2e-deps/**',
   ]),
 ])

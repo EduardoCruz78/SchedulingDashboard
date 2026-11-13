@@ -14,3 +14,4 @@ e2e/e2e-logs.txt
 docs/images
 Dockerfile
 docker-compose.yml
+.e2e-deps

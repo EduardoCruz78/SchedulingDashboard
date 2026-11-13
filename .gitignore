@@ -48,3 +48,4 @@ next-env.d.ts
 !.env.example
 /.claude
 /e2e/.env.generated
+/.e2e-deps

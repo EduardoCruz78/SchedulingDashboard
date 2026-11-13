@@ -9,3 +9,4 @@ src/lib/api/generated
 drizzle/meta
 next-env.d.ts
 AGENTS.md
+.e2e-deps
