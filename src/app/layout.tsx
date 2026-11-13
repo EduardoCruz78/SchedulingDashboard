@@ -25,7 +25,8 @@ export default function RootLayout({ children }: LayoutProps<'/'>) {
       <body className="bg-background text-foreground min-h-svh">
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <TooltipProvider>{children}</TooltipProvider>
-          <Toaster richColors closeButton />
+          {/* No richColors: its success green fails WCAG AA contrast (4.25:1); the icon carries the kind. */}
+          <Toaster closeButton />
         </ThemeProvider>
       </body>
     </html>

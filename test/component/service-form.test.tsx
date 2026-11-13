@@ -35,6 +35,30 @@ describe('ServiceForm', () => {
     expect(toast.error).not.toHaveBeenCalled()
   })
 
+  it('keeps what was typed after a validation error (React resets forms after an action)', async () => {
+    const user = userEvent.setup()
+    render(
+      <ServiceForm
+        action={async () => ({
+          status: 'error',
+          message: 'Check the highlighted fields.',
+          fieldErrors: { durationMinutes: ['Use a multiple of 15 minutes.'] },
+        })}
+      />,
+    )
+
+    await user.type(screen.getByLabelText('Name'), 'Deluxe shave')
+    await user.clear(screen.getByLabelText('Duration (minutes)'))
+    await user.type(screen.getByLabelText('Duration (minutes)'), '20')
+    await user.click(screen.getByRole('button', { name: 'Create service' }))
+
+    await waitFor(() => {
+      expect(screen.getByLabelText('Duration (minutes)')).toHaveAttribute('aria-invalid', 'true')
+    })
+    expect(screen.getByLabelText('Name')).toHaveValue('Deluxe shave')
+    expect(screen.getByLabelText('Duration (minutes)')).toHaveValue(20)
+  })
+
   it('pre-fills an existing service and sends its id', async () => {
     const user = userEvent.setup()
     let sent: FormData | undefined

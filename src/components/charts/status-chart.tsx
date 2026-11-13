@@ -24,7 +24,12 @@ export function StatusChart({ rows }: { rows: DayStatusRow[] }) {
     <div>
       <div className="h-64 w-full" aria-hidden>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: -16 }} barCategoryGap="25%">
+          <BarChart
+            accessibilityLayer={false}
+            data={data}
+            margin={{ top: 8, right: 8, bottom: 0, left: -16 }}
+            barCategoryGap="25%"
+          >
             <CartesianGrid vertical={false} stroke="var(--border)" strokeDasharray="0" />
             <XAxis
               dataKey="label"

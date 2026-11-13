@@ -4,7 +4,7 @@ import { useActionState } from 'react'
 import { Loader2 } from 'lucide-react'
 import { Field } from '@/components/form/field'
 import { FormMessage } from '@/components/form/form-message'
-import { useActionToast } from '@/components/form/use-action-toast'
+import { useToastingAction } from '@/components/form/use-action-toast'
 import { Button } from '@/components/ui/button'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Input } from '@/components/ui/input'
@@ -27,20 +27,33 @@ export function ServiceForm({
   action: (previous: ActionState, form: FormData) => Promise<ActionState>
   onSaved?: () => void
 }) {
-  const [state, formAction, pending] = useActionState<ActionState, FormData>(action, idle)
-  useActionToast(state, onSaved)
+  const [state, formAction, pending] = useActionState<ActionState, FormData>(
+    useToastingAction(action, onSaved),
+    idle,
+  )
   const errors = state.status === 'error' ? state.fieldErrors : {}
   const hasFieldErrors = Object.keys(errors).length > 0
+  // After an error, show what was typed; otherwise the saved service (or the defaults).
+  const typed = state.status === 'error' ? state.values : undefined
 
   return (
     <form action={formAction} className="grid gap-4" noValidate>
       {hasFieldErrors ? <FormMessage state={state} /> : null}
       {service ? <input type="hidden" name="id" value={service.id} /> : null}
       <Field id="service-name" label="Name" errors={errors.name}>
-        {(p) => <Input {...p} name="name" defaultValue={service?.name} maxLength={100} required />}
+        {(p) => (
+          <Input {...p} name="name" defaultValue={typed?.name ?? service?.name} maxLength={100} required />
+        )}
       </Field>
       <Field id="service-description" label="Description" errors={errors.description} hint="Optional.">
-        {(p) => <Textarea {...p} name="description" defaultValue={service?.description ?? ''} rows={2} />}
+        {(p) => (
+          <Textarea
+            {...p}
+            name="description"
+            defaultValue={typed?.description ?? service?.description ?? ''}
+            rows={2}
+          />
+        )}
       </Field>
       <div className="grid grid-cols-2 gap-4">
         <Field
@@ -58,7 +71,7 @@ export function ServiceForm({
               min={15}
               max={480}
               step={15}
-              defaultValue={service?.durationMinutes ?? 30}
+              defaultValue={typed?.durationMinutes ?? service?.durationMinutes ?? 30}
               required
             />
           )}
@@ -72,14 +85,18 @@ export function ServiceForm({
               inputMode="decimal"
               min={0}
               step="0.01"
-              defaultValue={service?.price ?? ''}
+              defaultValue={typed?.price ?? service?.price ?? ''}
               required
             />
           )}
         </Field>
       </div>
       <div className="flex items-center gap-2">
-        <Checkbox id="service-active" name="isActive" defaultChecked={service?.isActive ?? true} />
+        <Checkbox
+          id="service-active"
+          name="isActive"
+          defaultChecked={typed ? typed.isActive === 'on' : (service?.isActive ?? true)}
+        />
         <Label htmlFor="service-active">Active (customers can book it)</Label>
       </div>
       <Button type="submit" disabled={pending}>

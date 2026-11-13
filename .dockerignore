@@ -1,0 +1,16 @@
+node_modules
+.next
+.git
+.github
+.claude
+.env*
+!.env.example
+coverage
+test-results
+playwright-report
+blob-report
+e2e/.env.generated
+e2e/e2e-logs.txt
+docs/images
+Dockerfile
+docker-compose.yml

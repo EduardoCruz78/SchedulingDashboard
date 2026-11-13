@@ -1,11 +1,11 @@
 'use client'
 
-import { useActionState, useState, useTransition } from 'react'
+import { useActionState, useCallback, useState, useTransition } from 'react'
 import { Loader2, Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { Field } from '@/components/form/field'
 import { FormMessage } from '@/components/form/form-message'
-import { useActionToast } from '@/components/form/use-action-toast'
+import { useToastingAction } from '@/components/form/use-action-toast'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -46,14 +46,24 @@ export function ProfessionalForm({
   professional?: Professional
   onSaved?: () => void
 }) {
-  const [state, action, pending] = useActionState<ActionState, FormData>(saveProfessional, idle)
-  useActionToast(state, onSaved)
+  const [state, action, pending] = useActionState<ActionState, FormData>(
+    useToastingAction(saveProfessional, onSaved),
+    idle,
+  )
   const errors = state.status === 'error' ? state.fieldErrors : {}
   return (
     <form action={action} className="grid gap-4" noValidate>
       {professional ? <input type="hidden" name="id" value={professional.id} /> : null}
       <Field id="professional-name" label="Name" errors={errors.name}>
-        {(p) => <Input {...p} name="name" defaultValue={professional?.name} maxLength={100} required />}
+        {(p) => (
+          <Input
+            {...p}
+            name="name"
+            defaultValue={(state.status === 'error' ? state.values?.name : undefined) ?? professional?.name}
+            maxLength={100}
+            required
+          />
+        )}
       </Field>
       <div className="flex items-center gap-2">
         <Checkbox id="professional-active" name="isActive" defaultChecked={professional?.isActive ?? true} />
@@ -71,8 +81,10 @@ export function ServicesForm({
   professional: Professional
   services: Service[]
 }) {
-  const [state, action, pending] = useActionState<ActionState, FormData>(saveProfessionalServices, idle)
-  useActionToast(state)
+  const [, action, pending] = useActionState<ActionState, FormData>(
+    useToastingAction(saveProfessionalServices),
+    idle,
+  )
   // Inactive services stay listed only if the professional still has them (so they can be removed).
   const visible = services.filter((s) => s.isActive || professional.serviceIds.includes(s.id))
   return (
@@ -114,8 +126,10 @@ interface Row {
  * back keyed by the row's position (`intervals.3.end`), from Zod or from the API alike.
  */
 export function WorkingHoursEditor({ professional }: { professional: Professional }) {
-  const [state, action, pending] = useActionState<ActionState, FormData>(saveWorkingHours, idle)
-  useActionToast(state)
+  const [state, action, pending] = useActionState<ActionState, FormData>(
+    useToastingAction(saveWorkingHours),
+    idle,
+  )
   const [rows, setRows] = useState<Row[]>(() =>
     professional.workingHours.map((w, i) => ({ key: i, day: w.day, start: w.start, end: w.end })),
   )
@@ -221,12 +235,16 @@ export function WorkingHoursEditor({ professional }: { professional: Professiona
 }
 
 export function AddTimeOffForm({ professionalId }: { professionalId: string }) {
-  const [state, action, pending] = useActionState<ActionState, FormData>(addTimeOff, idle)
   const [formKey, setFormKey] = useState(0)
-  useActionToast(state, () => {
+  const clear = useCallback(() => {
     setFormKey((k) => k + 1) // clear the fields after a success
-  })
+  }, [])
+  const [state, action, pending] = useActionState<ActionState, FormData>(
+    useToastingAction(addTimeOff, clear),
+    idle,
+  )
   const errors = state.status === 'error' ? state.fieldErrors : {}
+  const typed = state.status === 'error' ? state.values : undefined
   return (
     <form
       key={formKey}
@@ -236,13 +254,17 @@ export function AddTimeOffForm({ professionalId }: { professionalId: string }) {
     >
       <input type="hidden" name="id" value={professionalId} />
       <Field id="timeoff-start" label="From" errors={errors.startsAt}>
-        {(p) => <Input {...p} type="datetime-local" name="startsAt" required />}
+        {(p) => (
+          <Input {...p} type="datetime-local" name="startsAt" defaultValue={typed?.startsAt} required />
+        )}
       </Field>
       <Field id="timeoff-end" label="Until" errors={errors.endsAt}>
-        {(p) => <Input {...p} type="datetime-local" name="endsAt" required />}
+        {(p) => <Input {...p} type="datetime-local" name="endsAt" defaultValue={typed?.endsAt} required />}
       </Field>
       <Field id="timeoff-reason" label="Reason" errors={errors.reason}>
-        {(p) => <Input {...p} name="reason" maxLength={200} placeholder="Optional" />}
+        {(p) => (
+          <Input {...p} name="reason" maxLength={200} placeholder="Optional" defaultValue={typed?.reason} />
+        )}
       </Field>
       <SubmitButton pending={pending}>Add time off</SubmitButton>
     </form>

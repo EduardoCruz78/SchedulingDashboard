@@ -70,3 +70,52 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  end-to-end:
+    name: End-to-end with SchedulingApi and WebhookRelay
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    needs: build-and-test
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # Projects 1 and 2 are public: build both from their main branch, next to this repository.
+      - uses: actions/checkout@v7
+        with:
+          repository: EduardoCruz78/SchedulingApi
+          path: scheduling-api
+
+      - uses: actions/checkout@v7
+        with:
+          repository: EduardoCruz78/WebhookRelay
+          path: webhook-relay
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run the three services and Playwright
+        env:
+          CI: 'true'
+          SCHEDULING_API_DIR: ${{ github.workspace }}/scheduling-api
+          WEBHOOK_RELAY_DIR: ${{ github.workspace }}/webhook-relay
+        run: bash e2e/run.sh
+
+      - name: Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report
+          path: |
+            playwright-report
+            test-results
+            e2e/e2e-logs.txt
+          retention-days: 7

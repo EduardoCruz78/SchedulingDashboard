@@ -1,9 +1,9 @@
 'use client'
 
-import { type RefObject, useActionState, useRef } from 'react'
+import { type RefObject, useActionState, useCallback, useRef } from 'react'
 import { Loader2 } from 'lucide-react'
 import { Field } from '@/components/form/field'
-import { useActionToast } from '@/components/form/use-action-toast'
+import { useToastingAction } from '@/components/form/use-action-toast'
 import {
   AlertDialog,
   AlertDialogCancel,
@@ -39,10 +39,13 @@ export function CancelDialog({
   /** The Server Action (injected, so the dialog can be tested with a fake). */
   action: (previous: ActionState, form: FormData) => Promise<ActionState>
 }) {
-  const [state, action, pending] = useActionState<ActionState, FormData>(cancelAction, idle)
-  useActionToast(state, () => {
+  const close = useCallback(() => {
     onOpenChange(false)
-  })
+  }, [onOpenChange])
+  const [state, action, pending] = useActionState<ActionState, FormData>(
+    useToastingAction(cancelAction, close),
+    idle,
+  )
   const fieldErrors = state.status === 'error' ? state.fieldErrors : {}
   const reason = useRef<HTMLTextAreaElement>(null)
 
@@ -68,7 +71,17 @@ export function CancelDialog({
           </AlertDialogHeader>
           <input type="hidden" name="appointmentId" value={appointmentId} />
           <Field id={`reason-${appointmentId}`} label="Reason" errors={fieldErrors.reason}>
-            {(props) => <Textarea {...props} ref={reason} name="reason" rows={3} maxLength={500} required />}
+            {(props) => (
+              <Textarea
+                {...props}
+                ref={reason}
+                name="reason"
+                rows={3}
+                maxLength={500}
+                defaultValue={state.status === 'error' ? state.values?.reason : undefined}
+                required
+              />
+            )}
           </Field>
           <AlertDialogFooter>
             <AlertDialogCancel type="button">Keep it</AlertDialogCancel>

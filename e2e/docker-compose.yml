@@ -1,0 +1,96 @@
+# End-to-end: the three portfolio projects, each built from its own source.
+#   SchedulingApi --outbox--> WebhookRelay --signed webhook--> SchedulingDashboard (and the dashboard calls both APIs)
+# Run with ./e2e/run.sh. SCHEDULING_API_DIR and WEBHOOK_RELAY_DIR point at checkouts (default: sibling folders).
+# Every credential below is a throwaway value for local containers only.
+name: scheduling-dashboard-e2e
+
+services:
+  relay-db:
+    image: postgres:17-alpine
+    environment: { POSTGRES_DB: relay, POSTGRES_USER: relay, POSTGRES_PASSWORD: relay }
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U relay -d relay']
+      interval: 3s
+      retries: 20
+
+  relay:
+    build: ${WEBHOOK_RELAY_DIR:-../../WebhookRelay}
+    depends_on:
+      relay-db: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgres://relay:relay@relay-db:5432/relay
+      MIGRATE_ON_START: 'true'
+      RUN_WORKER: 'true'
+      # The dashboard lives on the Docker network, over http.
+      ALLOW_PRIVATE_TARGETS: 'true'
+      ALLOW_HTTP_TARGETS: 'true'
+      BOOTSTRAP_ADMIN_KEY: e2e-admin-key-0123456789abcdefghijklmnop
+      BOOTSTRAP_SOURCE: scheduling-api
+      BOOTSTRAP_SOURCE_KEY: e2e-source-key-0123456789abcdefghijklmnop
+    ports:
+      - '3300:3000'
+    healthcheck:
+      test: ['CMD-SHELL', 'wget -q -O - http://127.0.0.1:3000/health || exit 1']
+      interval: 3s
+      retries: 40
+
+  scheduling-db:
+    image: postgres:17-alpine
+    environment: { POSTGRES_DB: scheduling, POSTGRES_USER: scheduling, POSTGRES_PASSWORD: scheduling }
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U scheduling -d scheduling']
+      interval: 3s
+      retries: 20
+
+  scheduling:
+    build: ${SCHEDULING_API_DIR:-../../SchedulingApi}
+    depends_on:
+      scheduling-db: { condition: service_healthy }
+      relay: { condition: service_healthy }
+    environment:
+      # Development: migrations and demo data (admin, customers, catalog) on startup.
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: Host=scheduling-db;Port=5432;Database=scheduling;Username=scheduling;Password=scheduling
+      Jwt__Secret: e2e-only-jwt-secret-0123456789abcdefghijklmnopqrstuv
+      Outbox__RelayUrl: http://relay:3000
+      Outbox__ApiKey: e2e-source-key-0123456789abcdefghijklmnop
+      Outbox__PollIntervalSeconds: '1'
+    ports:
+      - '8380:8080'
+
+  dashboard-db:
+    image: postgres:17-alpine
+    environment: { POSTGRES_DB: dashboard, POSTGRES_USER: dashboard, POSTGRES_PASSWORD: dashboard }
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U dashboard -d dashboard']
+      interval: 3s
+      retries: 20
+
+  # One-off: applies the dashboard's Drizzle migrations from the build stage (which has the dev tools).
+  dashboard-migrate:
+    build: { context: .., target: build }
+    command: ['node', 'scripts/migrate.mjs']
+    depends_on:
+      dashboard-db: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgres://dashboard:dashboard@dashboard-db:5432/dashboard
+    profiles: [tools]
+
+  dashboard:
+    build: ..
+    depends_on:
+      dashboard-db: { condition: service_healthy }
+    environment:
+      SCHEDULING_API_URL: http://scheduling:8080
+      WEBHOOK_RELAY_URL: http://relay:3000
+      WEBHOOK_RELAY_ADMIN_KEY: e2e-admin-key-0123456789abcdefghijklmnop
+      SESSION_SECRET: e2e-only-session-secret-0123456789abcdefghij
+      DATABASE_URL: postgres://dashboard:dashboard@dashboard-db:5432/dashboard
+      # Created by e2e/setup.mjs when it subscribes the dashboard to the relay (see run.sh).
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:-whsec_c2V0LWJ5LWUyZS1zZXR1cC1tanM=}
+      RELAY_SUBSCRIPTION_ID: ${RELAY_SUBSCRIPTION_ID:-}
+      DEMO_MODE: 'false'
+      BUSINESS_TIME_ZONE: America/Sao_Paulo
+      UPSTREAM_TIMEOUT_MS: '15000'
+    ports:
+      - '3200:3000'

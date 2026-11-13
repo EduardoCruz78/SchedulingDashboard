@@ -47,3 +47,4 @@ next-env.d.ts
 /e2e/e2e-logs.txt
 !.env.example
 /.claude
+/e2e/.env.generated
